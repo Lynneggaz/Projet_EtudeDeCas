@@ -1,0 +1,11 @@
+streamlit==1.38.0          # Interface utilisateur
+langchain         # Orchestration IA (agents, tools, memory)
+langchain-cohere   # Intégration Cohere
+langchain-community==0.3.1 # Communauté tools
+pandas==2.2.2              # Manipulation données
+plotly==5.24.0             # Visualisation interactive
+python-dotenv==1.0.1       # Gestion .env
+restrictedpython==7.2      # Sandbox pour exécution code sécurisée
+scikit-learn==1.5.1        # Métriques (BLEU, Accuracy, F1-Score)
+openpyxl==3.1.5            # Lecture Excel pour tests
+tqdm==4.66.5               # Barres de progression pour évals
