@@ -1,0 +1,63 @@
+[
+  {
+    "question": "Montre-moi l'évolution des ventes de BMW électriques en Chine depuis 2018",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['country'] == 'China') & (df['powertrain'] == 'BEV') & (df['year'] >= 2018)]\ngrouped = df_filtered.groupby('year')['sales'].sum().reset_index()\nfig = px.line(grouped, x='year', y='sales', title='Évolution ventes BMW électriques en Chine depuis 2018')\nprint(f'Chiffres clés: Total ventes = {grouped[\"sales\"].sum()}')\nprint('Explication: Les ventes ont augmenté grâce à la transition électrique en Chine.')\nfig.show()"
+  },
+  {
+    "question": "Quels sont les 10 modèles qui ont le plus progressé en Europe en 2024 vs 2023 ?",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_2023 = df[(df['year'] == 2023) & (df['region'] == 'Europe')].groupby('model')['sales'].sum().reset_index()\ndf_2024 = df[(df['year'] == 2024) & (df['region'] == 'Europe')].groupby('model')['sales'].sum().reset_index()\nmerged = pd.merge(df_2024, df_2023, on='model', suffixes=('_2024', '_2023'))\nmerged['growth'] = merged['sales_2024'] - merged['sales_2023']\ntop10 = merged.nlargest(10, 'growth')\nfig = px.bar(top10, x='model', y='growth', title='Top 10 modèles progression Europe 2024 vs 2023')\nprint(f'Chiffres clés: Max growth = {top10[\"growth\"].max()}')\nprint('Explication: Focus sur SUV et électriques.')\nfig.show()"
+  },
+  {
+    "question": "Compare les ventes diesel vs essence en Allemagne et en France depuis 2020",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['year'] >= 2020) & (df['country'].isin(['Germany', 'France'])) & (df['powertrain'].isin(['DIESEL', 'GASOLINE']))]\ngrouped = df_filtered.groupby(['year', 'country', 'powertrain'])['sales'].sum().reset_index()\nfig = px.bar(grouped, x='year', y='sales', color='powertrain', facet_col='country', title='Comparaison Diesel vs Essence Allemagne/France depuis 2020')\nprint(f'Chiffres clés: Total Diesel DE = {grouped[(grouped[\"country\"] == \"Germany\") & (grouped[\"powertrain\"] == \"DIESEL\")][\"sales\"].sum()}')\nprint('Explication: Baisse diesel en Europe due aux normes.')\nfig.show()"
+  },
+  {
+    "question": "Quels pays ont vu leurs ventes totales BMW baisser de plus de 15% en 2023 ?",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_2022 = df[df['year'] == 2022].groupby('country')['sales'].sum().reset_index()\ndf_2023 = df[df['year'] == 2023].groupby('country')['sales'].sum().reset_index()\nmerged = pd.merge(df_2023, df_2022, on='country', suffixes=('_2023', '_2022'))\nmerged['pct_change'] = (merged['sales_2023'] - merged['sales_2022']) / merged['sales_2022'] * 100\ndropped = merged[merged['pct_change'] < -15]\nfig = px.bar(dropped, x='country', y='pct_change', title='Pays avec baisse >15% en 2023')\nprint(f'Chiffres clés: {len(dropped)} pays affectés')\nprint('Explication: Impact économique ou transition électrique.')\nfig.show()"
+  },
+  {
+    "question": "Top 5 régions par ventes totales en 2024",
+    "code": "SELECT region, SUM(sales) as total_sales FROM sales WHERE year = 2024 GROUP BY region ORDER BY total_sales DESC LIMIT 5;"
+  },
+  {
+    "question": "Ventes moyennes par modèle en Asie depuis 2015",
+    "code": "import pandas as pd\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['region'] == 'Asia') & (df['year'] >= 2015)]\ngrouped = df_filtered.groupby('model')['sales'].mean().reset_index().sort_values('sales', ascending=False)\nprint(grouped)\nprint('Explication: Modèles populaires en Asie.')",
+    "explanation": "Use print for key figures since no graph needed."
+  },
+  {
+    "question": "Évolution ventes SUV vs Sedan globalement",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ngrouped = df.groupby(['year', 'category'])['sales'].sum().reset_index()\nfig = px.line(grouped, x='year', y='sales', color='category', title='Évolution SUV vs Sedan')\nfig.show()"
+  },
+  {
+    "question": "Pays avec plus de 10000 ventes PHEV en 2023",
+    "code": "SELECT country, SUM(sales) as total FROM sales WHERE powertrain = 'PHEV' AND year = 2023 GROUP BY country HAVING total > 10000 ORDER BY total DESC;"
+  },
+  {
+    "question": "Comparaison ventes BEV Europe vs Amérique du Nord depuis 2020",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['powertrain'] == 'BEV') & (df['year'] >= 2020) & (df['region'].isin(['Europe', 'North America']))]\ngrouped = df_filtered.groupby(['year', 'region'])['sales'].sum().reset_index()\nfig = px.bar(grouped, x='year', y='sales', color='region', title='BEV Europe vs North America depuis 2020')\nfig.show()"
+  },
+  {
+    "question": "Modèles les plus vendus en Allemagne en 2024",
+    "code": "SELECT model, SUM(sales) as total FROM sales WHERE country = 'Germany' AND year = 2024 GROUP BY model ORDER BY total DESC LIMIT 10;"
+  },
+  {
+    "question": "Baisse ventes diesel global depuis 2018",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['powertrain'] == 'DIESEL') & (df['year'] >= 2018)]\ngrouped = df_filtered.groupby('year')['sales'].sum().reset_index()\nfig = px.line(grouped, x='year', y='sales', title='Baisse ventes diesel depuis 2018')\nfig.show()"
+  },
+  {
+    "question": "Part de marché électrique par région en 2024",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_2024 = df[df['year'] == 2024]\ntotal_by_region = df_2024.groupby('region')['sales'].sum().reset_index(name='total')\nelectric_by_region = df_2024[df_2024['powertrain'] == 'BEV'].groupby('region')['sales'].sum().reset_index(name='electric')\nmerged = pd.merge(total_by_region, electric_by_region, on='region')\nmerged['share'] = merged['electric'] / merged['total'] * 100\nfig = px.pie(merged, values='share', names='region', title='Part BEV par région 2024')\nfig.show()"
+  },
+  {
+    "question": "Ventes totales par powertrain en France 2020-2024",
+    "code": "SELECT powertrain, SUM(sales) as total FROM sales WHERE country = 'France' AND year BETWEEN 2020 AND 2024 GROUP BY powertrain ORDER BY total DESC;"
+  },
+  {
+    "question": "Croissance ventes X5 mondial depuis 2015",
+    "code": "import pandas as pd\nimport plotly.express as px\ndf = pd.read_csv('data/processed/bmw_cleaned.csv')\ndf_filtered = df[(df['model'] == 'X5') & (df['year'] >= 2015)]\ngrouped = df_filtered.groupby('year')['sales'].sum().reset_index()\nfig = px.line(grouped, x='year', y='sales', title='Croissance X5 mondial depuis 2015')\nfig.show()"
+  },
+  {
+    "question": "Top 5 pays par ventes totales 2010-2024",
+    "code": "SELECT country, SUM(sales) as total FROM sales GROUP BY country ORDER BY total DESC LIMIT 5;"
+  }
+]
